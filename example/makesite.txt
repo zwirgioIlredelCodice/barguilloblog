@@ -1,0 +1,2 @@
+pages/**/*.md simplehead simpletail
+pages/sus.txt hhead ttail
