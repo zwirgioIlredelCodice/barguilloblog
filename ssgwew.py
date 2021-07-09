@@ -10,14 +10,10 @@ def createsite_folder(project_dir):
     new_dir = os.path.join(os.getcwd(), "SITE")
     if not os.path.exists(new_dir):
         os.makedirs(new_dir)
+
     site_dir = new_dir  # enter in SITE folder
 
-    dir_list = os.listdir()
-
-    folder_upper_list = []
-    for i in dir_list:  # make a list of folder in uppercase
-        if os.path.isdir(i) and i.isupper() and i != "SITE":
-            folder_upper_list.append(i)
+    folder_upper_list = listdir_upper(project_dir)
 
     for i in folder_upper_list:
         # copy all folder in UPPERCASE and is content in site_dir
@@ -69,6 +65,16 @@ def md_to_HTML(makesite_list,project_dir,out_dir):
             print(html_dir)
             with open(html_dir, "w", encoding="utf-8", errors="xmlcharrefreplace") as output_file:
                 output_file.write(html)
+
+def listdir_upper(directory):
+    dir_list = os.listdir(project_dir)
+
+    folder_upper_list = []
+    for i in dir_list:  # make a list of folder in uppercase
+        if os.path.isdir(os.path.join(project_dir,i)) and i.isupper():
+            folder_upper_list.append(i)
+    return folder_upper_list
+
 
 def clean(out_dir):
     remove_tree(out_dir)
