@@ -21,11 +21,16 @@ def createsite_folder(project_dir, out_pages_dir):
         print(" \"site\" folder is missing\nEXIT")
         quit()
 
-    # list of .md file in site copied folder to delate
-    file_to_remove = glob.glob('SITE/pages/**/*.md', recursive=True)
-    for i in file_to_remove:
-        os.remove(i)
+    # list of .md file in site copied folder to rename with .html
+    file_to_rename = glob.glob('SITE/pages/**/*.md', recursive=True)
+    file_renamed = []
+    for i in file_to_rename:
+        file_renamed.append(os.path.splitext(i)[0]+".html")
 
+    for i in range(len(file_renamed)):
+        os.rename(file_to_rename[i],file_renamed[i])
+    
+    return file_renamed
 
 def read_makesite(project_dir):
     with open(os.path.join(project_dir,'makesite.txt'), 'r') as makesite:
@@ -41,87 +46,42 @@ def read_makesite(project_dir):
     return makesite_list
 
 
-def md_to_HTML(makesite_list,project_dir,out_pages_dir,name_project):
+def md_to_HTML(makesite_list,project_dir,file_output_dir):
+    for line_command in range(0, len(makesite_list), 3):
+        file_in = os.path.join(project_dir,makesite_list[line_command][0])
 
-    for commands in makesite_list:
-        # finde the file writtn in makefile.txt
+        file_head_list = makesite_list[line_command+1]
+        head_html = ""
+        for i in file_head_list:
+            with open(os.path.join(project_dir,i), "r") as file_head:
+                # Reading form a file
+                head_html = head_html + file_head.read()
 
-        file_content_out = ""
-        file_out_list = []
+        file_tail_list = makesite_list[line_command+2]
+        tail_html = ""
+        for i in file_tail_list:
+            with open(os.path.join(project_dir,i), "r") as file_tail:
+                # Reading form a file
+                tail_html = tail_html + file_tail.read()
+        
+        
+        file_in_list = glob.glob(file_in, recursive=True)
 
-        file_list = glob.glob(commands[0], recursive=True)
-
-        if len(file_list) > 0: #if 
-
-            for i in file_list:
-                # change extension to html and put in SITE folder
-                namefile_md = i.replace(os.path.commonpath([i,out_pages_dir]),"").replace('/'+name_project+'/'+"pages"+'/',"") #è orribile da fare megio 
-                namefile_html = os.path.splitext(namefile_md)[0]+".html"
-                html_dir = os.path.join(out_pages_dir, namefile_html)
-                
-                file_out_list.append(html_dir) #make a list of file.html
+        if len(file_in_list) > 0:
             
-            for argument in commands[1::]:
+            for i in range(len(file_in_list)):
 
-                argument_path = os.path.join(project_dir,argument)
+                file_content_out = ""
 
-                if argument_path.endswith(".html"): #if is an html file append at the output file
-
-                    if os.path.isfile(argument_path):
-                        with open(argument_path, "r", encoding="utf-8") as input_file:
-                            file_content_out = file_content_out + input_file.read()
-                    else:
-                        print(argument," file not found WARNING")
-
-                if argument_path = "page":
-
-                    for i in file_list:
-                        with open(i, "r", encoding="utf-8") as input_file:
-                            text = input_file.read()
-                            file_content_out = file_content_out + markdown.markdown(text)
+                with open(file_in_list[i], "r", encoding="utf-8") as input_file:
+                    text = input_file.read()
+                    file_content_out = head_html + markdown.markdown(text) + tail_html
                 
-                else:
-                    print(argument_path," file not found WARNING")            
-
-
+                with open(file_output_dir[i], "w", encoding="utf-8") as output_file:
+                    output_file.write(file_content_out)
+                
         else:
-            print(commands[0]," file not found WARNING")        
-
-        for argument in commands[1::]:
-
-            argument_path = os.path.join(project_dir,argument)
-
-            if argument_path.endswith(".html"): #if is an html file append at the output file
-
-                if os.path.isfile(argument_path):
-                    with open(argument_path, "r", encoding="utf-8") as input_file:
-                        file_content_out = file_content_out + input_file.read()
-                else:
-                    print(argument," file not found WARNING")
-
-            if argument_path.endswith(".md"): #if is an markdown file
-
-                file_list = glob.glob(argument_path, recursive=True)
-
-                if len(file_list) > 0: #if 
-
-                    for i in file_list:
-                        with open(i, "r", encoding="utf-8") as input_file:
-                            text = input_file.read()
-                            file_content_out = file_content_out + markdown.markdown(text)
-                
-                else:
-                    print(argument_path," file not found WARNING")
-
-                
-
-            # change extension to html and put in SITE folder
-            namefile_md = i.replace(os.path.commonpath([i,out_pages_dir]),"").replace('/'+name_project+'/'+"pages"+'/',"") #è orribile da fare megio 
-            
-            namefile_html = os.path.splitext(namefile_md)[0]+".html"
-            html_dir = os.path.join(out_pages_dir, namefile_html)
-            with open(html_dir, "w", encoding="utf-8", errors="xmlcharrefreplace") as output_file:
-                output_file.write(file_content_out)
+            print("no file found with rule ",file_in)
 
 def listdir_upper(directory):
     dir_list = os.listdir(project_dir)
@@ -147,11 +107,9 @@ if __name__ == "__main__":
             if not os.path.exists(out_pages_dir): #create SITE folder
                 os.makedirs(out_pages_dir)
             
-            createsite_folder(project_dir, out_pages_dir)  # to test it
-
-            out_pages_dir = os.path.join(out_pages_dir,"pages")
+            file_output_dir = createsite_folder(project_dir, out_pages_dir)  # to test it
 
             makesite_list = read_makesite(project_dir)
-            md_to_HTML(makesite_list,project_dir,out_pages_dir,sys.argv[1])  # for testing
+            md_to_HTML(makesite_list,project_dir,file_output_dir)  # for testing
     else:
         print("no args or to many ERROR :(")
