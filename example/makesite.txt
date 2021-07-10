@@ -1,2 +1,3 @@
-pages/**/*.md simplehead simpletail
-pages/sus.txt hhead ttail
+pages/**/*.md 
+html_inserts/simple_head.html
+html_inserts/simple_tail.html
