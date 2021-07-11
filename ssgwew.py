@@ -15,7 +15,8 @@ def createsite_folder(project_dir, out_pages_dir):
 
     # create pages folder with subfolder
     if os.path.isdir(os.path.join(project_dir, "pages")):
-        copy_tree(os.path.join(project_dir, "pages"),os.path.join(out_pages_dir, "pages"))
+        copy_tree(os.path.join(project_dir, "pages"),
+                  os.path.join(out_pages_dir, "pages"))
 
     else:
         print(" \"site\" folder is missing\nEXIT")
@@ -28,12 +29,13 @@ def createsite_folder(project_dir, out_pages_dir):
         file_renamed.append(os.path.splitext(i)[0]+".html")
 
     for i in range(len(file_renamed)):
-        os.rename(file_to_rename[i],file_renamed[i])
-    
+        os.rename(file_to_rename[i], file_renamed[i])
+
     return file_renamed
 
+
 def read_makesite(project_dir):
-    with open(os.path.join(project_dir,'makesite.txt'), 'r') as makesite:
+    with open(os.path.join(project_dir, 'makesite.txt'), 'r') as makesite:
         # make a list ["file","arg1","file","arg1",..]
         makesite_data = makesite.readlines()
 
@@ -41,54 +43,55 @@ def read_makesite(project_dir):
     for i in makesite_data:
         # make a list [["file","arg1",..],["file","arg1",..]]
         makesite_list.append(i.split())
-    
+
     print(makesite_list)
     return makesite_list
 
 
-def md_to_HTML(makesite_list,project_dir,file_output_dir):
+def md_to_HTML(makesite_list, project_dir, file_output_dir):
     for line_command in range(0, len(makesite_list), 3):
-        file_in = os.path.join(project_dir,makesite_list[line_command][0])
+        file_in = os.path.join(project_dir, makesite_list[line_command][0])
 
         file_head_list = makesite_list[line_command+1]
         head_html = ""
         for i in file_head_list:
-            with open(os.path.join(project_dir,i), "r") as file_head:
+            with open(os.path.join(project_dir, i), "r") as file_head:
                 # Reading form a file
                 head_html = head_html + file_head.read()
 
         file_tail_list = makesite_list[line_command+2]
         tail_html = ""
         for i in file_tail_list:
-            with open(os.path.join(project_dir,i), "r") as file_tail:
+            with open(os.path.join(project_dir, i), "r") as file_tail:
                 # Reading form a file
                 tail_html = tail_html + file_tail.read()
-        
-        
+
         file_in_list = glob.glob(file_in, recursive=True)
 
         if len(file_in_list) > 0:
-            
+
             for i in range(len(file_in_list)):
 
                 file_content_out = ""
 
                 with open(file_in_list[i], "r", encoding="utf-8") as input_file:
                     text = input_file.read()
-                    file_content_out = head_html + markdown.markdown(text) + tail_html
-                
+                    file_content_out = head_html + \
+                        markdown.markdown(text) + tail_html
+
                 with open(file_output_dir[i], "w", encoding="utf-8") as output_file:
                     output_file.write(file_content_out)
-                
+
         else:
-            print("no file found with rule ",file_in)
+            print("no file found with rule ", file_in)
+
 
 def listdir_upper(directory):
     dir_list = os.listdir(project_dir)
 
     folder_upper_list = []
     for i in dir_list:  # make a list of folder in uppercase
-        if os.path.isdir(os.path.join(project_dir,i)) and i.isupper():
+        if os.path.isdir(os.path.join(project_dir, i)) and i.isupper():
             folder_upper_list.append(i)
     return folder_upper_list
 
@@ -96,20 +99,23 @@ def listdir_upper(directory):
 def clean(out_pages_dir):
     remove_tree(out_pages_dir)
 
+
 if __name__ == "__main__":
     if len(sys.argv) == 2:
-        project_dir = os.path.join(os.getcwd(),sys.argv[1])
-        out_pages_dir = os.path.join(os.getcwd(),"SITE")
+        project_dir = os.path.join(os.getcwd(), sys.argv[1])
+        out_pages_dir = os.path.join(os.getcwd(), "SITE")
 
         if sys.argv[1] == "clean":
             clean(out_pages_dir)
         else:
-            if not os.path.exists(out_pages_dir): #create SITE folder
+            if not os.path.exists(out_pages_dir):  # create SITE folder
                 os.makedirs(out_pages_dir)
-            
-            file_output_dir = createsite_folder(project_dir, out_pages_dir)  # to test it
+
+            file_output_dir = createsite_folder(
+                project_dir, out_pages_dir)  # to test it
 
             makesite_list = read_makesite(project_dir)
-            md_to_HTML(makesite_list,project_dir,file_output_dir)  # for testing
+            md_to_HTML(makesite_list, project_dir,
+                       file_output_dir)  # for testing
     else:
         print("no args or to many ERROR :(")
