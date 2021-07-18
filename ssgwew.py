@@ -48,6 +48,17 @@ def read_makesite(project_dir):
     return makesite_list
 
 
+def fix_link_HTML(html_text):
+    tag_openlink = '<a href="'
+    tag_closelink = '">'
+    open_link = html_text.find(tag_openlink)
+    close_link = html_text.find(tag_closelink,open_link)
+
+    link_address = html_text[open_link:close_link]
+
+    link_address = link_address.replace(tag_openlink, "")
+    print(link_address)
+
 def md_to_HTML(makesite_list, project_dir, file_output_dir):
     for line_command in range(0, len(makesite_list), 3):
         file_in = os.path.join(project_dir, makesite_list[line_command][0])
@@ -76,8 +87,8 @@ def md_to_HTML(makesite_list, project_dir, file_output_dir):
 
                 with open(file_in_list[i], "r", encoding="utf-8") as input_file:
                     text = input_file.read()
-                    file_content_out = head_html + \
-                        markdown.markdown(text) + tail_html
+                    file_content_out = head_html + markdown.markdown(text) + tail_html
+                    fix_link_HTML(file_content_out)
 
                 with open(file_output_dir[i], "w", encoding="utf-8") as output_file:
                     output_file.write(file_content_out)
