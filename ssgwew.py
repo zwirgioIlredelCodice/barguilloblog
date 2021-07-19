@@ -2,6 +2,7 @@ import markdown
 import os
 import sys
 import glob
+import re
 from distutils.dir_util import copy_tree, remove_tree
 
 
@@ -44,23 +45,43 @@ def read_makesite(project_dir):
         # make a list [["file","arg1",..],["file","arg1",..]]
         makesite_list.append(i.split())
 
-    print(makesite_list)
     return makesite_list
 
 
-def fix_link_HTML(html_text):
+def fix_link_HTML(html_text, link_prefix):
+    html = html_text
+
     tag_openlink = '<a href="'
     tag_closelink = '">'
-    open_link = html_text.find(tag_openlink)
-    close_link = html_text.find(tag_closelink,open_link)
+    
+    open_link = [m.start() for m in re.finditer(tag_openlink, html_text)]
+    close_link = []
+    for i in open_link:
+        close_link.append(html_text.find(tag_closelink,i))
+    
+    for i in range(len(close_link)):
+        link_address = html_text[open_link[i]:close_link[i]]
 
-    link_address = html_text[open_link:close_link]
+        base_link = link_address + tag_closelink
 
-    link_address = link_address.replace(tag_openlink, "")
-    print(link_address)
+        link_address = link_address.replace(tag_openlink, "")
+
+        if not (link_address.startswith("https://") or link_address.startswith("http://")): #if is a local link
+            link_address = link_prefix + link_address
+
+        link_replace = tag_openlink + link_address + tag_closelink
+    
+
+        html = html.replace(base_link, link_replace)
+    
+    return html
+
 
 def md_to_HTML(makesite_list, project_dir, file_output_dir):
-    for line_command in range(0, len(makesite_list), 3):
+
+    link = makesite_list[0][0]
+
+    for line_command in range(1, len(makesite_list), 3):
         file_in = os.path.join(project_dir, makesite_list[line_command][0])
 
         file_head_list = makesite_list[line_command+1]
@@ -88,8 +109,8 @@ def md_to_HTML(makesite_list, project_dir, file_output_dir):
                 with open(file_in_list[i], "r", encoding="utf-8") as input_file:
                     text = input_file.read()
                     file_content_out = head_html + markdown.markdown(text) + tail_html
-                    fix_link_HTML(file_content_out)
-
+                    file_content_out = fix_link_HTML(file_content_out, link)
+                
                 with open(file_output_dir[i], "w", encoding="utf-8") as output_file:
                     output_file.write(file_content_out)
 
