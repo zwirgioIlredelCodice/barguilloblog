@@ -1,4 +1,4 @@
-import markdown
+import commonmark
 import os
 import sys
 import glob
@@ -125,7 +125,7 @@ def md_to_HTML(makesite_list, project_dir, file_output_dir):
 
                 with open(file_in_list[i], "r", encoding="utf-8") as input_file:
                     text = input_file.read()
-                    file_content_out = head_html + markdown.markdown(text) + tail_html
+                    file_content_out = head_html + commonmark.commonmark(text) + tail_html
                     file_content_out = fix_link_HTML(file_content_out, link)
                 
                 with open(file_output_dir[i], "w", encoding="utf-8") as output_file:

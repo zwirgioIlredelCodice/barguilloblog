@@ -6,7 +6,7 @@ simple markdown to html static site geneartor written in python.
 
 ### dependenies 
 * python3 (tested with python3.8-3.9)
-* python pakage `markdown`, install with `pip3 install markdon`
+* python pakage `commonmark`, install with `pip3 install commonmark`
 
 ### to run
 `python3 ssgwew.py sitefolder` sitefolder is the folder with the file used to construct the site
@@ -50,14 +50,21 @@ SITE
         |--cat.jpg
         |--rock.jpg
 ```
+
+### markdown?
+is used the commonmark markdown syntax Markdown 
+* [python pakage used](https://pypi.org/project/commonmark/)
+* [Syntax Documentation](https://commonmark.org/)
+
+
 ### makesite.txt?
 is a text file that tell the static site generator how to assemble html pages
 
 1. first line contain the link where the site is host es `https://github.com/zwirgioIlredelCodice/`
 2. next 3 lines
     1. indicate the file or group of file Unix style pathname pattern expansion [glob](https://docs.python.org/3/library/glob.html)
-    2. indicate html file (es `head.html`), html text (es `<p>html text</p>`) and command (es [autotitle]) to put before the page html
-    3. indicate html file (es `head.html`), html text (es `<p>html text</p>`) and command (es [autotitle]) to put after the page html
+    2. indicate html file (es `head.html`), html text (es `"<p>html text</p>"`) and command (es [autotitle]) to put before the page html
+    3. indicate html file (es `head.html`), html text (es `"<p>html text</p>"`) and command (es [autotitle]) to put after the page html
 
 example 
 makesite.txt
