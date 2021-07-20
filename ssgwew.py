@@ -77,6 +77,32 @@ def fix_link_HTML(html_text, link_prefix):
     return html
 
 
+def interprete_command(list_command):
+
+    html_output = ""
+
+    for command in list_command:
+
+        if command.endswith(".html"): #if is an html file es head.html
+            with open(os.path.join(project_dir, command), "r") as file_head:
+                # Reading form a file
+                html_output = html_output + file_head.read()
+        
+        elif command.startswith('"') and command.endswith('"'): #if is a html text es "<p> hello </p>"
+            html_output = html_output + command[1:-1] #remove " " from text string
+
+        elif command.startswith('[') and command.endswith(']'): #if is a command es [autotitle]
+            #list of command
+            if command == "[ssgwew]":
+                html_output = html_output + "<p>made with ssgwew</p>"
+            else:
+                print("command ", command, "not recognise WARNING :|")
+        
+        else:
+            print(command, "is not an html file, html string or command WARNING :|")
+    return html_output
+
+
 def md_to_HTML(makesite_list, project_dir, file_output_dir):
 
     link = makesite_list[0][0]
@@ -84,19 +110,11 @@ def md_to_HTML(makesite_list, project_dir, file_output_dir):
     for line_command in range(1, len(makesite_list), 3):
         file_in = os.path.join(project_dir, makesite_list[line_command][0])
 
-        file_head_list = makesite_list[line_command+1]
-        head_html = ""
-        for i in file_head_list:
-            with open(os.path.join(project_dir, i), "r") as file_head:
-                # Reading form a file
-                head_html = head_html + file_head.read()
+        command_head_list = makesite_list[line_command+1]
+        head_html = interprete_command(command_head_list)
 
-        file_tail_list = makesite_list[line_command+2]
-        tail_html = ""
-        for i in file_tail_list:
-            with open(os.path.join(project_dir, i), "r") as file_tail:
-                # Reading form a file
-                tail_html = tail_html + file_tail.read()
+        command_tail_list = makesite_list[line_command+2]
+        tail_html = interprete_command(command_tail_list)
 
         file_in_list = glob.glob(file_in, recursive=True)
 

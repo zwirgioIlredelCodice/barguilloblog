@@ -1,4 +1,4 @@
 https://
 pages/**/*.md 
 html_inserts/start_head.html html_inserts/simple_head.html html_inserts/end_head.html
-html_inserts/start_tail.html html_inserts/simple_tail.html html_inserts/end_tail.html
+html_inserts/start_tail.html html_inserts/simple_tail.html [ssgwew] html_inserts/end_tail.html
