@@ -105,6 +105,10 @@ OUTPUT for es pages/index.md is file SITE/pages/index.html
 </html>
 <!-- end content tail.html -->
 ```
+__for understand better see the example folder(imput) and the SITE foder(output)__
+
+__if you like this project and want to improve it or fork it, go for it :)__
+
 for now is all. stay tuned for updates :)
 
 > is hard to do documentation.
