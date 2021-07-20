@@ -71,7 +71,7 @@ head.html
 tail.html
 ```
 head.html
-```
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -80,12 +80,12 @@ head.html
 <body>
 ```
 tail.html
-```
+```html
 </body>
 </html>
 ```
 OUTPUT for es pages/index.md is file SITE/pages/index.html
-```
+```html
 <!-- start content head.html -->
 <!DOCTYPE html>
 <html>
