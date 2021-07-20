@@ -51,7 +51,7 @@ def read_makesite(project_dir):
 def fix_link_HTML(html_text, link_prefix):
     html = html_text
 
-    tag_openlink = '<a href="'
+    tag_openlink = 'href="'
     tag_closelink = '">'
     
     open_link = [m.start() for m in re.finditer(tag_openlink, html_text)]
@@ -70,7 +70,6 @@ def fix_link_HTML(html_text, link_prefix):
             link_address = link_prefix + link_address
 
         link_replace = tag_openlink + link_address + tag_closelink
-    
 
         html = html.replace(base_link, link_replace)
     

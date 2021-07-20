@@ -15,6 +15,7 @@
 
 [This link](http://example.net/)
 
+[blog](pages/BLOG/blog1.html)
 alora abbiamo fatto `centro`
 
 ![Alt text](../IMAGES/ssdd.jpg)
