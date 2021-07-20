@@ -164,7 +164,6 @@ if __name__ == "__main__":
                 project_dir, out_pages_dir)  # to test it
 
             makesite_list = read_makesite(project_dir)
-            md_to_HTML(makesite_list, project_dir,
-                       file_output_dir)  # for testing
+            md_to_HTML(makesite_list, project_dir, file_output_dir)  # for testing
     else:
         print("no args or to many ERROR :(")
