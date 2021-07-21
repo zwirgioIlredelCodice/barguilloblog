@@ -1,7 +1,7 @@
 import commonmark
 import os
 import sys
-import glob
+import glob 
 import re
 from distutils.dir_util import copy_tree, remove_tree
 
