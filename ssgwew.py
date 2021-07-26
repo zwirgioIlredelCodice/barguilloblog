@@ -48,31 +48,59 @@ def read_makesite(project_dir):
     return makesite_list
 
 
-def fix_link_HTML(html_text, link_prefix):
+def fix_extern_HTML(html_text, link_prefix):
     html = html_text
 
-    tag_openlink = 'href="'
-    tag_closelink = '">'
-    
-    open_link = [m.start() for m in re.finditer(tag_openlink, html_text)]
-    close_link = []
-    for i in open_link:
-        close_link.append(html_text.find(tag_closelink,i))
-    
-    for i in range(len(close_link)):
-        link_address = html_text[open_link[i]:close_link[i]]
+    tag_openhref = 'href="'
+    tag_closehref = '">'
 
-        base_link = link_address + tag_closelink
+    tag_opensrc = 'src="'
+    tag_closesrc = '"'
+    
+    # for href
+    open_href = [m.start() for m in re.finditer(tag_openhref, html_text)]
+    close_href = []
 
-        link_address = link_address.replace(tag_openlink, "")
+    for i in open_href:
+        close_href.append(html_text.find(tag_closehref,i))
+
+    # for src
+    open_src = [m.start() for m in re.finditer(tag_opensrc, html_text)]
+    close_src = []
+    
+    for i in open_src:
+        close_src.append(html_text.find(tag_closesrc,i+len(tag_opensrc)+1))
+
+    # for href
+    for i in range(len(close_href)):
+        link_address = html_text[open_href[i]:close_href[i]]
+
+        base_link = link_address + tag_closehref
+
+        link_address = link_address.replace(tag_openhref, "")
 
         if not (link_address.startswith("https://") or link_address.startswith("http://")): #if is a local link
             link_address = link_prefix + link_address
 
-        link_replace = tag_openlink + link_address + tag_closelink
+        link_replace = tag_openhref + link_address + tag_closehref
 
         html = html.replace(base_link, link_replace)
     
+    # for src
+    for y in range(len(open_src)):
+        link_address = html_text[open_src[y]:close_src[y]]
+
+        base_link = link_address + tag_closesrc
+
+        link_address = link_address.replace(tag_opensrc, "")
+
+        if not (link_address.startswith("https://") or link_address.startswith("http://")): #if is a local link
+            link_address = link_prefix + link_address
+
+        link_replace = tag_opensrc + link_address + tag_closesrc
+
+        html = html.replace(base_link, link_replace)
+
     return html
 
 
@@ -92,8 +120,10 @@ def interprete_command(list_command):
 
         elif command.startswith('[') and command.endswith(']'): #if is a command es [autotitle]
             #list of command
+
             if command == "[ssgwew]":
                 html_output = html_output + "<p>made with ssgwew</p>"
+            
             else:
                 print("command ", command, "not recognise WARNING :|")
         
@@ -126,7 +156,7 @@ def md_to_HTML(makesite_list, project_dir, file_output_dir):
                 with open(file_in_list[i], "r", encoding="utf-8") as input_file:
                     text = input_file.read()
                     file_content_out = head_html + commonmark.commonmark(text) + tail_html
-                    file_content_out = fix_link_HTML(file_content_out, link)
+                    file_content_out = fix_extern_HTML(file_content_out, link)
                 
                 with open(file_output_dir[i], "w", encoding="utf-8") as output_file:
                     output_file.write(file_content_out)
